@@ -1,0 +1,7 @@
+.idea
+dataset/cosmos/articles
+dataset/fauxtography/articles
+dataset/post4v/articles
+dataset/cosmos/articles/*txt
+dataset/fauxtography/articles/*txt
+dataset/post4v/articles/*txt

@@ -2,6 +2,5 @@
 dataset/cosmos/articles
 dataset/fauxtography/articles
 dataset/post4v/articles
-dataset/cosmos/articles/*txt
-dataset/fauxtography/articles/*txt
-dataset/post4v/articles/*txt
+dataset/llama3_annotations_mmfc
+dataset/llama3_annotations_mmfc_v1

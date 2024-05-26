@@ -14,9 +14,9 @@ headers = {
 
 LLAMA3_PROMPT = """You are a helpful AI assistant. Your are customized for a specific use case. 
 
-You are required to summarize an article focusing on detailed fact-checking an image the following information: the type of the image: whether it is authentic or fake; the topic; the background of the real image (the authentic image or image before manipulation), when and where the image was taken and which event it is describing. 
+You are required to summarize an article focusing on detailed fact-checking an image the following information: the type of image: (True: the image is authentic; Out-of-Context, the image is authentic but it is miscaptioned, misidentified, misrepresented, misappropriated) ; the topic; the background of the real image (the authentic image or image before manipulation; Manipulated: the image is digitally altered, morphed; AI-Generated: the image is ai-generated), when and where the image was taken and which event it is describing. 
 
-You are required to specializes in creating structured JSON reports. The JSON report includes the following key entries: "type of image" (authentic or fake), "topic" (one of Politics, Entertainment, Business, Health&Science, Society, Environment and History) "real time", "real location" (better contains city and country within the string), "real event" (one sentence contains important details). When specific details are not available in the article, you need note "Not Enough Informaiton" for that entry. Responses are presented in a formal, technical style, ensuring accuracy and clarity.
+You are required to specializes in creating structured JSON reports. The JSON report includes the following key entries: "type of image" (One of True, Out-of-Context, Manipulated, AI-Generated), "topic" (one of Politics, Entertainment, Business, Health&Science, Society, Environment and History) "real time", "real location" (better contains city and country within the string), "real event" (one sentence contains important details). When specific details are not available in the article, you need note "Not Enough Informaiton" for that entry. Responses are presented in a formal, technical style, ensuring accuracy and clarity.
 
 Note: If the image is AI-generated, "real time", "real location", and "real event" will be "Not Enough Information".
 """
@@ -41,16 +41,20 @@ def llama3_prompting(content, model):
 
     return resp
 
-def label_corpus_llama3(corpus, model="llama3:8b"):
+def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
 
     if corpus in ["fauxtography", "cosmos", "post4v"]:
         csvfile = os.path.join('dataset', corpus, f"{corpus}_data.csv")
         df_input = pd.read_csv(csvfile)
         articles_folder = os.path.join('dataset', corpus, f"{corpus}_articles")
-        if "llama3_annotations_mmfc" not in os.listdir('dataset'):
-            os.mkdir('dataset/llama3_annotations_mmfc/')
 
-        saved_jsonfile = os.path.join('dataset/llama3_annotations_mmfc/', f"llama3_annotations_{corpus}.json")
+    annotated_path = "llama3_annotations_mmfc"
+    if suffix:
+        annotated_path = annotated_path + f"_{suffix}"
+        if annotated_path not in os.listdir('dataset'):
+            os.mkdir(f'dataset/{annotated_path}/')
+
+        saved_jsonfile = os.path.join(f'dataset/{annotated_path}/', f"llama3_annotations_{corpus}.json")
         if os.path.isfile(saved_jsonfile):
             json_data = json.load(open(saved_jsonfile))
         else:
@@ -96,7 +100,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, default='llama3:70b')
     parser.add_argument('--corpus', type=str, default="post4v")
-    # parser.add_argument('')
+    parser.add_argument('--suffix', type=str, default="v1")
     args = parser.parse_args()
     if "llama3" in args.model:
-        label_corpus_llama3(args.corpus, args.model)
+        label_corpus_llama3(args.corpus, args.model, args.suffix)

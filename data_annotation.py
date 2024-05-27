@@ -76,7 +76,7 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
                     json_match = re.search(r'\{.*\}', llama3_output, re.DOTALL)
                     if json_match:
                         json_str = json_match.group(0)
-
+                        json_str = re.sub("[‘’“”]", "\"", json_str)
                         try:
                             cur_data = json.loads(json_str)
                             print(cur_data)
@@ -88,9 +88,11 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
 
                         except json.JSONDecodeError as e:
                             print(f"Error decoding JSON: {e}")
+                            print(json_str)
 
                     else:
                         print(f"No match for {article_path}")
+                        print(llama3_output)
 
 
             # if index > 10:

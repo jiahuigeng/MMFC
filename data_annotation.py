@@ -62,6 +62,8 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
             json_data = dict()
 
         for index, row in df_input.iterrows():
+            if index < 760:
+                continue
             article_path = row["article_path"]
             claim = row["claim_en"]
             if claim in json_data:
@@ -70,8 +72,15 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
             print(index, row["claim_en"])
             if str(article_path) not in ["", "nan", "None"]:
                 if article_path.startswith("dataset"):
+                    try:
+                        content = LLAMA3_PROMPT + '\n\nArticle: \n' + open(article_path, encoding="utf-8").read()
+                    except:
+                        try:
+                            content = LLAMA3_PROMPT + '\n\nArticle: \n' + open(article_path, encoding='windows-1254').read()
+                        except:
+                            continue
+                        continue
 
-                    content = LLAMA3_PROMPT + '\n\nArticle: \n' + open(article_path, encoding="utf-8").read()
                     llama3_output = llama3_prompting(content, model)
                     # print(llama3_output)
                     json_match = re.search(r'\{.*\}', llama3_output, re.DOTALL)
@@ -101,7 +110,7 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default='llama3:70b')
+    parser.add_argument('--model', type=str, default='llama3:8b')
     parser.add_argument('--corpus', type=str, default="post4v")
     parser.add_argument('--suffix', type=str, default="v1")
     args = parser.parse_args()

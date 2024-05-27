@@ -44,8 +44,9 @@ def llama3_prompting(content, model):
 def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
 
     if corpus in ["fauxtography", "cosmos", "post4v"]:
+        print(corpus)
         csvfile = os.path.join('dataset', corpus, f"{corpus}_data.csv")
-        df_input = pd.read_csv(csvfile)
+        df_input = pd.read_csv(csvfile, encoding='ISO-8859-1')
         articles_folder = os.path.join('dataset', corpus, f"{corpus}_articles")
 
     annotated_path = "llama3_annotations_mmfc"
@@ -84,7 +85,7 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
                             if row["claim_en"] not in json_data:
                                 json_data[claim] = cur_data
 
-                            json.dump(json_data, open(saved_jsonfile, 'w'), indent=4)
+                            json.dump(json_data, open(saved_jsonfile, 'w', encoding="utf-8"), indent=4)
 
                         except json.JSONDecodeError as e:
                             print(f"Error decoding JSON: {e}")

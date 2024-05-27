@@ -68,8 +68,9 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
             if claim in json_data:
                 continue
             image_id = row["image_id"]
-            print(index, row["claim_en"])
+
             if str(article_path) not in ["", "nan", "None"]:
+                print(index, "article path not empty and not in json", row["claim_en"])
                 # if article_path.startswith("dataset"):
                 try:
                     content = LLAMA3_PROMPT + '\n\nArticle: \n' + open(article_path, encoding="utf-8").read()
@@ -109,8 +110,8 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default='llama3:70b')
-    parser.add_argument('--corpus', type=str, default="post4v")
+    parser.add_argument('--model', type=str, default='llama3:8b')
+    parser.add_argument('--corpus', type=str, default="fauxtography")
     parser.add_argument('--suffix', type=str, default="v1")
     args = parser.parse_args()
     if "llama3" in args.model:

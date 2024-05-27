@@ -118,7 +118,7 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default='llama3:8b')
+    parser.add_argument('--model', type=str, default='llama3:70b')
     parser.add_argument('--corpus', type=str, default="fauxtography")
     parser.add_argument('--suffix', type=str, default="v1")
     args = parser.parse_args()

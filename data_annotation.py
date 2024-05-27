@@ -62,8 +62,7 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
             json_data = dict()
 
         for index, row in df_input.iterrows():
-            # if index < 760:
-            #     continue
+
             article_path = row["article_path"]
             claim = row["claim_en"]
             if claim in json_data:

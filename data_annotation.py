@@ -88,6 +88,7 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
                     content = LLAMA3_PROMPT + '\n\nArticle: \n' + open(article_path, encoding="utf-8").read()
                 except:
                     print(index, "cannot read article", article_path)
+                    print(f"arthcle {article_path} exist: {os.path.exists(article_path)}")
                     continue
                 # llama3_output = llama3_prompting(content, model)
                 # # print(llama3_output)

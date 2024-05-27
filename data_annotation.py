@@ -70,38 +70,38 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
             image_id = row["image_id"]
             print(index, row["claim_en"])
             if str(article_path) not in ["", "nan", "None"]:
-                if article_path.startswith("dataset"):
+                # if article_path.startswith("dataset"):
+                try:
+                    content = LLAMA3_PROMPT + '\n\nArticle: \n' + open(article_path, encoding="utf-8").read()
+                except:
                     try:
-                        content = LLAMA3_PROMPT + '\n\nArticle: \n' + open(article_path, encoding="utf-8").read()
+                        content = LLAMA3_PROMPT + '\n\nArticle: \n' + open(article_path, encoding='windows-1254').read()
                     except:
-                        try:
-                            content = LLAMA3_PROMPT + '\n\nArticle: \n' + open(article_path, encoding='windows-1254').read()
-                        except:
-                            continue
                         continue
+                    continue
 
-                    llama3_output = llama3_prompting(content, model)
-                    # print(llama3_output)
-                    json_match = re.search(r'\{.*\}', llama3_output, re.DOTALL)
-                    if json_match:
-                        json_str = json_match.group(0)
-                        json_str = re.sub("[‘’“”]", "\"", json_str)
-                        try:
-                            cur_data = json.loads(json_str)
-                            print(cur_data)
-                            cur_data["image_id"] = image_id
-                            if row["claim_en"] not in json_data:
-                                json_data[claim] = cur_data
+                llama3_output = llama3_prompting(content, model)
+                # print(llama3_output)
+                json_match = re.search(r'\{.*\}', llama3_output, re.DOTALL)
+                if json_match:
+                    json_str = json_match.group(0)
+                    json_str = re.sub("[‘’“”]", "\"", json_str)
+                    try:
+                        cur_data = json.loads(json_str)
+                        print(cur_data)
+                        cur_data["image_id"] = image_id
+                        if row["claim_en"] not in json_data:
+                            json_data[claim] = cur_data
 
-                            json.dump(json_data, open(saved_jsonfile, 'w', encoding="utf-8"), indent=4)
+                        json.dump(json_data, open(saved_jsonfile, 'w', encoding="utf-8"), indent=4)
 
-                        except json.JSONDecodeError as e:
-                            print(f"Error decoding JSON: {e}")
-                            print(json_str)
+                    except json.JSONDecodeError as e:
+                        print(f"Error decoding JSON: {e}")
+                        print(json_str)
 
-                    else:
-                        print(f"No match for {article_path}")
-                        print(llama3_output)
+                else:
+                    print(f"No match for {article_path}")
+                    print(llama3_output)
 
 
             # if index > 10:
@@ -109,7 +109,7 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default='llama3:8b')
+    parser.add_argument('--model', type=str, default='llama3:70b')
     parser.add_argument('--corpus', type=str, default="post4v")
     parser.add_argument('--suffix', type=str, default="v1")
     args = parser.parse_args()

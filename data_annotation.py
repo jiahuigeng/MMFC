@@ -90,28 +90,28 @@ def label_corpus_llama3(corpus, model="llama3:8b", suffix=""):
                     print(index, "cannot read article", article_path)
                     print(f"arthcle {article_path} exist: {os.path.exists(article_path)}")
                     continue
-                # llama3_output = llama3_prompting(content, model)
-                # # print(llama3_output)
-                # json_match = re.search(r'\{.*\}', llama3_output, re.DOTALL)
-                # if json_match:
-                #     json_str = json_match.group(0)
-                #     json_str = re.sub("[‘’“”]", "\"", json_str)
-                #     try:
-                #         cur_data = json.loads(json_str)
-                #         print(cur_data)
-                #         cur_data["image_id"] = image_id
-                #         if row["claim_en"] not in json_data:
-                #             json_data[claim] = cur_data
-                #
-                #         json.dump(json_data, open(saved_jsonfile, 'w', encoding="utf-8"), indent=4)
-                #
-                #     except json.JSONDecodeError as e:
-                #         print(f"Error decoding JSON: {e}")
-                #         print(json_str)
-                #
-                # else:
-                #     print(f"No match for {article_path}")
-                #     print(llama3_output)
+                llama3_output = llama3_prompting(content, model)
+                # print(llama3_output)
+                json_match = re.search(r'\{.*\}', llama3_output, re.DOTALL)
+                if json_match:
+                    json_str = json_match.group(0)
+                    json_str = re.sub("[‘’“”]", "\"", json_str)
+                    try:
+                        cur_data = json.loads(json_str)
+                        print(cur_data)
+                        cur_data["image_id"] = image_id
+                        if row["claim_en"] not in json_data:
+                            json_data[claim] = cur_data
+
+                        json.dump(json_data, open(saved_jsonfile, 'w', encoding="utf-8"), indent=4)
+
+                    except json.JSONDecodeError as e:
+                        print(f"Error decoding JSON: {e}")
+                        print(json_str)
+
+                else:
+                    print(f"No match for {article_path}")
+                    print(llama3_output)
 
 
             # if index > 10:
